@@ -2,20 +2,20 @@
 
 import { useActionState } from "react";
 import type { ActionResult } from "@/lib/errors";
-import type { Transition } from "@/lib/review-queue/types";
+import type { ReviewItem, Transition } from "@/lib/review-queue/types";
 
 type TransitionAction = (
   previous: ActionResult<null> | null,
   formData: FormData,
 ) => Promise<ActionResult<null>>;
 
-export function TransitionForm({
+export function TransitionForm<Item extends ReviewItem>({
   id,
   transition,
   action,
 }: {
   id: string;
-  transition: Transition<{ id: string; status: "pending" | "in_review" | "approved" | "rejected"; assigneeId: string | null }>;
+  transition: Transition<Item>;
   action: TransitionAction;
 }) {
   const [state, formAction] = useActionState<ActionResult<null> | null, FormData>(

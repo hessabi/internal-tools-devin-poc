@@ -9,9 +9,9 @@ export function notAssignee(
   return item.assigneeId === actor.userId ? "SELF_APPROVAL" : null;
 }
 
-export function assignToActor(
-  _item: ReviewItem,
+export function assignToActor<Item extends ReviewItem>(
+  _item: Item,
   actor: Session,
-): Partial<ReviewItem> {
+): Partial<Item> {
   return { assigneeId: actor.userId };
 }
