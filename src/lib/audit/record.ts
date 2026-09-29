@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import type { AuditAction } from "@/lib/config/states";
 
-const REDACTED_FIELDS = new Set(["customerEmail", "updatedAt"]);
+const REDACTED_FIELDS = new Set(["customerEmail", "updatedAt", "assignee"]);
 
 type AuditRecord = Record<string, unknown>;
 
