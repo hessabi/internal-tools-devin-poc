@@ -2,6 +2,15 @@ import Link from "next/link";
 import { z } from "zod";
 import { AppHeader } from "@/components/app-header";
 import { Pagination } from "@/components/review-queue/pagination";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { PageHeader } from "@/components/ui/page-header";
 import { can } from "@/lib/auth/permissions";
 import { requirePageSession } from "@/lib/auth/session";
@@ -46,11 +55,15 @@ export default async function AuditPage({
     return (
       <>
         <AppHeader session={session} />
-        <main className="mx-auto max-w-6xl px-6 py-10">
-          <div className="rounded border border-red-200 bg-red-50 p-6 text-red-900">
-            <h1 className="text-xl font-semibold">403. Access denied</h1>
-            <p className="mt-2">Your role cannot view the audit log.</p>
-          </div>
+        <main className="mx-auto max-w-6xl px-6 py-8">
+          <Card className="ring-destructive/30">
+            <CardHeader>
+              <CardTitle className="text-lg text-destructive">
+                <h1>403. Access denied</h1>
+              </CardTitle>
+              <CardDescription>Your role cannot view the audit log.</CardDescription>
+            </CardHeader>
+          </Card>
         </main>
       </>
     );
@@ -64,24 +77,24 @@ export default async function AuditPage({
   return (
     <>
       <AppHeader session={session} />
-      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <PageHeader
           title="Audit log"
           description="Immutable activity entries for internal tools."
         />
-        <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase text-slate-500">
-              <tr>
-                <th className="px-4 py-3">Time</th>
-                <th className="px-4 py-3">Actor</th>
-                <th className="px-4 py-3">Action</th>
-                <th className="px-4 py-3">Entity</th>
-                <th className="px-4 py-3">Comment</th>
-                <th className="px-4 py-3">Changes</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Card className="py-0">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead className="px-4">Time</TableHead>
+                <TableHead className="px-4">Actor</TableHead>
+                <TableHead className="px-4">Action</TableHead>
+                <TableHead className="px-4">Entity</TableHead>
+                <TableHead className="px-4">Comment</TableHead>
+                <TableHead className="px-4">Changes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {result.items.map((entry) => {
                 const changes = parseChanges(entry.changes);
                 const queue = queueForEntityType(entry.entityType);
@@ -93,24 +106,24 @@ export default async function AuditPage({
                     )
                   : [];
                 return (
-                  <tr className="border-t border-slate-200 align-top" key={entry.id}>
-                    <td className="whitespace-nowrap px-4 py-3">{formatUtc(entry.createdAt)}</td>
-                    <td className="px-4 py-3">
+                  <TableRow className="align-top" key={entry.id}>
+                    <TableCell className="px-4 py-3">{formatUtc(entry.createdAt)}</TableCell>
+                    <TableCell className="px-4 py-3 whitespace-normal">
                       {entry.actor.name}
-                      <span className="block text-xs text-slate-500">{entry.actor.role}</span>
-                    </td>
-                    <td className="px-4 py-3">{entry.action}</td>
-                    <td className="px-4 py-3">
+                      <span className="block text-xs text-muted-foreground">{entry.actor.role}</span>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 whitespace-normal">{entry.action}</TableCell>
+                    <TableCell className="px-4 py-3 whitespace-normal">
                       {queue ? (
-                        <Link className="text-blue-700 hover:underline" href={`${queue.basePath}/${entry.entityId}`}>
+                        <Link className="font-mono text-xs text-blue-700 hover:underline" href={`${queue.basePath}/${entry.entityId}`}>
                           {entry.entityType}/{entry.entityId}
                         </Link>
                       ) : (
                         `${entry.entityType}/${entry.entityId}`
                       )}
-                    </td>
-                    <td className="max-w-xs px-4 py-3">{entry.comment ?? ""}</td>
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="max-w-xs px-4 py-3 whitespace-normal">{entry.comment ?? ""}</TableCell>
+                    <TableCell className="px-4 py-3 whitespace-normal">
                       {changes ? (
                         <ul className="space-y-1">
                           {changedKeys.map((key) => (
@@ -122,20 +135,20 @@ export default async function AuditPage({
                           ))}
                         </ul>
                       ) : "Unavailable"}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
               {result.items.length === 0 ? (
-                <tr>
-                  <td className="px-4 py-8 text-center text-slate-500" colSpan={6}>
+                <TableRow>
+                  <TableCell className="py-8 text-center text-muted-foreground" colSpan={6}>
                     No audit entries yet.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : null}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
         <Pagination
           page={result.page}
           pageCount={result.pageCount}

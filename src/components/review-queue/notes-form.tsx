@@ -1,6 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useFeedback } from "@/components/ui/feedback";
 import type { ActionResult } from "@/lib/errors";
@@ -33,12 +36,16 @@ export function NotesForm({
     null,
   );
   return (
-    <form className="rounded border border-slate-200 bg-white p-5" action={formAction}>
-      <input name="id" type="hidden" value={id} />
-      <label className="block text-sm font-medium" htmlFor="notes">Notes</label>
-      <textarea className="mt-2 w-full rounded border border-slate-300 p-2" defaultValue={notes} id="notes" maxLength={2000} name="notes" rows={5} />
-      <SubmitButton label="Save notes" pending={pending} variant="secondary" />
-      {state && !state.ok ? <p className="mt-2 text-sm text-red-700">{state.message}</p> : null}
-    </form>
+    <Card>
+      <CardContent>
+        <form action={formAction} className="space-y-3">
+          <input name="id" type="hidden" value={id} />
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea defaultValue={notes} id="notes" maxLength={2000} name="notes" rows={5} />
+          <SubmitButton label="Save notes" pending={pending} variant="secondary" />
+          {state && !state.ok ? <p className="text-sm text-destructive">{state.message}</p> : null}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
