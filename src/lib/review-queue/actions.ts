@@ -176,6 +176,16 @@ export async function runTransition<Item extends ReviewItem>(
   });
 }
 
+export function canEditNotes<Item extends ReviewItem>(
+  config: ReviewQueueConfig<Item>,
+  item: Item,
+): boolean {
+  return (
+    config.editableNotesField !== undefined &&
+    !config.notesLockedStatuses.includes(item.status)
+  );
+}
+
 const notesInput = z.object({
   id: z.string().min(1),
   notes: z.string().max(2000),
@@ -194,6 +204,9 @@ export async function updateNotes<Item extends ReviewItem>(
     throw new AppError("FORBIDDEN", "Notes are not editable for this queue");
   }
   const item = await getItem(config, session, parsed.data.id);
+  if (!canEditNotes(config, item)) {
+    throw new AppError("NOTES_LOCKED", "Notes cannot be edited after a decision");
+  }
   return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const updated = await config.repository.update(tx, item.id, {
       [config.editableNotesField as string]: parsed.data.notes,

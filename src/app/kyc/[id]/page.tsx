@@ -9,6 +9,7 @@ import { requirePageSession } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import {
   availableTransitions,
+  canEditNotes,
   getItem,
   summarizeTransition,
 } from "@/lib/review-queue/actions";
@@ -43,7 +44,15 @@ export default async function KycDetailPage({
         </Link>
         <PageHeader title={item.customerLabel} description="Synthetic KYC case details" />
         <QueueDetail config={kycQueue} item={item} />
-        <NotesForm action={kycNotesAction} id={item.id} notes={item.notes} />
+        {canEditNotes(kycQueue, item) ? (
+          <NotesForm action={kycNotesAction} id={item.id} notes={item.notes} />
+        ) : (
+          <section className="rounded border border-slate-200 bg-white p-5">
+            <h2 className="text-sm font-medium">Notes</h2>
+            <p className="mt-2 whitespace-pre-wrap text-sm">{item.notes || "No notes."}</p>
+            <p className="mt-2 text-xs text-slate-600">Notes are locked because this case has a decision.</p>
+          </section>
+        )}
         {transitions.length > 0 ? (
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">Available actions</h2>

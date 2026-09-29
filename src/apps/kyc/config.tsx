@@ -3,6 +3,7 @@ import { defineReviewQueue } from "@/lib/review-queue/define";
 import { assignToActor, notAssignee } from "@/lib/review-queue/transitions";
 import type { ReviewQueueConfig } from "@/lib/review-queue/types";
 import { ROLES } from "@/lib/config/roles";
+import { DECIDED_STATUSES } from "@/lib/config/states";
 import {
   REVIEW_STATUSES,
   REVIEW_STATUS_LABELS,
@@ -86,5 +87,6 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     { key: "submittedAt", label: "Submitted", render: (item) => formatUtc(item.submittedAt) },
   ],
   editableNotesField: "notes",
+  notesLockedStatuses: DECIDED_STATUSES,
   repository: kycRepository,
 });

@@ -9,7 +9,8 @@ export type AppErrorCode =
   | "COMMENT_REQUIRED"
   | "SELF_APPROVAL"
   | "AUDIT_IMMUTABLE"
-  | "DEV_LOGIN_DISABLED";
+  | "DEV_LOGIN_DISABLED"
+  | "NOTES_LOCKED";
 
 const statusByCode: Record<AppErrorCode, number> = {
   UNAUTHENTICATED: 401,
@@ -21,6 +22,7 @@ const statusByCode: Record<AppErrorCode, number> = {
   SELF_APPROVAL: 403,
   AUDIT_IMMUTABLE: 409,
   DEV_LOGIN_DISABLED: 403,
+  NOTES_LOCKED: 409,
 };
 
 export class AppError extends Error {

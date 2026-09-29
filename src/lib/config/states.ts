@@ -15,6 +15,8 @@ export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
   rejected: "Rejected",
 };
 
+export const DECIDED_STATUSES: readonly ReviewStatus[] = ["approved", "rejected"];
+
 export const AUDIT_ACTIONS = [
   "update",
   "start_review",

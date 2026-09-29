@@ -72,5 +72,6 @@ export type ReviewQueueConfig<Item extends ReviewItem> = {
     render: (item: Item) => ReactNode;
   }[];
   editableNotesField?: keyof Item & string;
+  notesLockedStatuses: readonly ReviewStatus[];
   repository: QueueRepository<Item>;
 };
