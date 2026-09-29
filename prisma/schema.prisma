@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(cuid())
+  email          String      @unique
+  name           String
+  role           String
+  createdAt      DateTime    @default(now())
+  auditEntries   AuditEntry[]
+  assignedCases  KycCase[]   @relation("CaseAssignee")
+}
+
+model AuditEntry {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  changes    String
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model KycCase {
+  id            String   @id @default(cuid())
+  customerLabel String
+  customerEmail String
+  country       String
+  riskLevel     String
+  status        String
+  assigneeId    String?
+  assignee      User?    @relation("CaseAssignee", fields: [assigneeId], references: [id])
+  notes         String   @default("")
+  submittedAt   DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([riskLevel])
+}
