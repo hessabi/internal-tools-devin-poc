@@ -67,7 +67,7 @@ The permission matrix is:
 | Capability | analyst | manager | admin |
 | --- | --- | --- | --- |
 | View KYC queue and case detail | yes | yes | yes |
-| Start review and edit notes | yes | yes | yes |
+| Start review, edit notes before a decision | yes | yes | yes |
 | Approve or reject low or medium risk | yes | yes | yes |
 | Approve or reject high risk | no | yes | yes |
 | View audit log | no | yes | yes |
@@ -228,6 +228,21 @@ Moving this foundation into production would still require:
 - A defined compliance scope.
 - Monitoring and on-call.
 - Access reviews.
+
+Known risks in this prototype that production must close:
+
+- Audit entries are append-only only in the Prisma client (`src/lib/db.ts`).
+  The database must also deny `UPDATE` and `DELETE` on `AuditEntry` through
+  grants or triggers. The seed script uses a plain client and can clear the
+  table, which is intended for local data only.
+- Notes are locked once a case is approved or rejected, but any role can edit
+  them before that. Decide whether some roles or states should be read-only.
+- The dev session cookie is an HMAC of the user id with no expiry or
+  revocation. It is acceptable for local sign-in only; the OIDC provider must
+  own session lifetime and revocation.
+- Roles, states, and risk levels are plain strings validated by Zod in the
+  app. The database has no check constraints, so a direct write can store an
+  invalid value. Add Postgres enums or check constraints.
 
 These production concerns are described in
 [`docs/power-apps-research.md`](docs/power-apps-research.md), section 6.
