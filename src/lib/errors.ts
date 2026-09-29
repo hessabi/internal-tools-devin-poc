@@ -38,3 +38,18 @@ export class AppError extends Error {
     return new AppError("VALIDATION", error.issues[0]?.message ?? "Invalid input");
   }
 }
+
+export type ActionResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; code: AppErrorCode; message: string };
+
+export function toActionResult<T>(error: unknown): ActionResult<T> {
+  if (error instanceof AppError) {
+    return { ok: false, code: error.code, message: error.message };
+  }
+  return {
+    ok: false,
+    code: "VALIDATION",
+    message: "The request could not be completed",
+  };
+}

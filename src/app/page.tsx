@@ -1,10 +1,35 @@
+import Link from "next/link";
+import { AppHeader } from "@/components/app-header";
+import { can } from "@/lib/auth/permissions";
+import { requireSession } from "@/lib/auth/session";
+
 export default function Home() {
+  return <HomeContent />;
+}
+
+async function HomeContent() {
+  const session = await requireSession();
   return (
-    <main className="mx-auto min-h-screen max-w-4xl p-8">
-      <h1 className="text-3xl font-semibold">Internal Tools Foundation</h1>
-      <p className="mt-3 text-slate-600">
-        A synthetic prototype for secure, reusable internal review tools.
-      </p>
-    </main>
+    <>
+      <AppHeader session={session} />
+      <main className="mx-auto max-w-6xl px-6 py-10">
+        <h1 className="text-3xl font-semibold">Internal Tools Foundation</h1>
+        <p className="mt-3 text-slate-600">
+          Synthetic internal review tools built on a shared foundation.
+        </p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <Link className="rounded border border-slate-200 bg-white p-5 hover:border-slate-400" href="/kyc">
+            <h2 className="font-semibold">KYC review queue</h2>
+            <p className="mt-1 text-sm text-slate-600">Review synthetic customer cases.</p>
+          </Link>
+          {can(session, "viewAuditLog") ? (
+            <Link className="rounded border border-slate-200 bg-white p-5 hover:border-slate-400" href="/audit">
+              <h2 className="font-semibold">Audit log</h2>
+              <p className="mt-1 text-sm text-slate-600">Review immutable activity entries.</p>
+            </Link>
+          ) : null}
+        </div>
+      </main>
+    </>
   );
 }
