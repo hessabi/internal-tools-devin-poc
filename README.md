@@ -285,6 +285,24 @@ Known risks in this prototype that production must close:
 These production concerns are described in
 [`docs/power-apps-research.md`](docs/power-apps-research.md), section 6.
 
+## How this was built
+
+This prototype was built with Devin Cloud across separate sessions, one per
+piece of work:
+
+- [PR #1](https://github.com/hessabi/internal-tools-devin-poc/pull/1):
+  Power Apps build-vs-buy research.
+- [PR #2](https://github.com/hessabi/internal-tools-devin-poc/pull/2):
+  foundation and KYC review queue.
+- [PR #4](https://github.com/hessabi/internal-tools-devin-poc/pull/4):
+  refunds dashboard on the review-queue foundation.
+- [Issue #3](https://github.com/hessabi/internal-tools-devin-poc/issues/3):
+  the refunds dashboard tool request that PR #4 implemented.
+
+`AGENTS.md` was the guardrails file for every session. It sets the scope,
+stack, engineering rules, verification steps, and writing style that each
+session had to follow.
+
 ## Project layout
 
 ```text
