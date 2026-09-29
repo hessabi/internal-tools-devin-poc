@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { KYC_COUNTRIES } from "../src/apps/kyc/countries";
 
 // Synthetic data only. Nothing here refers to a real person.
 const prisma = new PrismaClient();
@@ -11,7 +12,6 @@ const users = [
   { email: "admin.one@example.com", name: "Test Admin 01", role: "admin" },
 ] as const;
 
-const countries = ["AQ", "BV", "CX", "EH", "UM"] as const;
 const riskLevels = ["low", "medium", "high"] as const;
 const statuses = ["pending", "in_review", "approved", "rejected"] as const;
 const refundReasons = [
@@ -54,7 +54,7 @@ async function main(): Promise<void> {
       data: {
         customerLabel: `Test Customer ${String(number).padStart(3, "0")}`,
         customerEmail: `test.customer.${String(number).padStart(3, "0")}@example.com`,
-        country: countries[index % countries.length],
+        country: KYC_COUNTRIES[index % KYC_COUNTRIES.length],
         riskLevel: riskLevels[index % riskLevels.length],
         status,
         assigneeId,

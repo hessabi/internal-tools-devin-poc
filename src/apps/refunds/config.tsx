@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/components/review-queue/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { defineReviewQueue } from "@/lib/review-queue/define";
 import { assignToActor, notAssignee } from "@/lib/review-queue/transitions";
@@ -89,7 +90,7 @@ export const refundsQueue: ReviewQueueConfig<Refund> = defineReviewQueue({
     { key: "customerLabel", label: "Customer", render: (item) => item.customerLabel },
     { key: "amount", label: "Amount", render: amount },
     { key: "reason", label: "Reason", render: (item) => REFUND_REASON_LABELS[item.reason] },
-    { key: "status", label: "Status", render: (item) => <Badge value={item.status} /> },
+    { key: "status", label: "Status", render: (item) => <StatusBadge status={item.status} /> },
     { key: "assignee", label: "Assignee", render: (item) => item.assignee?.name ?? "Unassigned" },
     { key: "submittedAt", label: "Submitted", render: (item) => formatUtc(item.submittedAt) },
   ],
@@ -101,10 +102,10 @@ export const refundsQueue: ReviewQueueConfig<Refund> = defineReviewQueue({
     {
       key: "amountBand",
       label: "Approval level",
-      render: (item) => <Badge value={AMOUNT_BAND_LABELS[amountBandOf(item)]} />,
+      render: (item) => <Badge label={AMOUNT_BAND_LABELS[amountBandOf(item)]} />,
     },
     { key: "reason", label: "Reason", render: (item) => REFUND_REASON_LABELS[item.reason] },
-    { key: "status", label: "Status", render: (item) => <Badge value={item.status} /> },
+    { key: "status", label: "Status", render: (item) => <StatusBadge status={item.status} /> },
     { key: "assignee", label: "Assignee", render: (item) => item.assignee?.name ?? "Unassigned" },
     { key: "submittedAt", label: "Submitted", render: (item) => formatUtc(item.submittedAt) },
   ],

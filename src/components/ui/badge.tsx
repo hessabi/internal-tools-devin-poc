@@ -1,7 +1,18 @@
-export function Badge({ value }: { value: string }) {
+export type BadgeTone = "neutral" | "green" | "amber" | "red";
+
+const TONE_CLASSES: Record<BadgeTone, string> = {
+  neutral: "bg-slate-100 text-slate-700",
+  green: "bg-green-100 text-green-800",
+  amber: "bg-amber-100 text-amber-800",
+  red: "bg-red-100 text-red-800",
+};
+
+export function Badge({ label, tone = "neutral" }: { label: string; tone?: BadgeTone }) {
   return (
-    <span className="inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-      {value}
+    <span
+      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${TONE_CLASSES[tone]}`}
+    >
+      {label}
     </span>
   );
 }

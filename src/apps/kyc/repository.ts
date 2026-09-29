@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { ReviewStatusSchema } from "@/lib/config/states";
 import { RiskLevelSchema } from "@/apps/kyc/risk";
+import { KYC_COUNTRIES } from "@/apps/kyc/countries";
 import type { KycCase } from "@/apps/kyc/types";
 import type { QueueRepository } from "@/lib/review-queue/types";
 
@@ -57,7 +58,7 @@ export const kycRepository: QueueRepository<KycCase> = {
 };
 
 export function countryOptions(): { value: string; label: string }[] {
-  return ["AQ", "BV", "CX", "EH", "UM"].map((country) => ({
+  return KYC_COUNTRIES.map((country) => ({
     value: country,
     label: country,
   }));
