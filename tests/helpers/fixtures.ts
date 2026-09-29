@@ -9,6 +9,7 @@ export type FixtureUsers = {
 
 export async function resetDatabase(): Promise<void> {
   await prisma.$executeRaw`DELETE FROM "AuditEntry"`;
+  await prisma.$executeRaw`DELETE FROM "Refund"`;
   await prisma.$executeRaw`DELETE FROM "KycCase"`;
   await prisma.$executeRaw`DELETE FROM "User"`;
 }
@@ -60,6 +61,28 @@ export async function createKycCase(input: {
       status: input.status ?? "pending",
       assigneeId: input.assigneeId ?? null,
       notes: "",
+      submittedAt: new Date("2025-01-01T00:00:00.000Z"),
+    },
+  });
+}
+
+export async function createRefund(input: {
+  amountCents?: number;
+  reason?: string;
+  status?: string;
+  assigneeId?: string | null;
+  refundLabel?: string;
+}) {
+  return prisma.refund.create({
+    data: {
+      refundLabel: input.refundLabel ?? "Refund RF-001",
+      customerLabel: "Test Customer 001",
+      orderReference: "test-order-1001",
+      amountCents: input.amountCents ?? 12_50,
+      currency: "USD",
+      reason: input.reason ?? "other",
+      status: input.status ?? "pending",
+      assigneeId: input.assigneeId ?? null,
       submittedAt: new Date("2025-01-01T00:00:00.000Z"),
     },
   });
