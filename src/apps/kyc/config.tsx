@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/review-queue/status-badge";
 import { defineReviewQueue } from "@/lib/review-queue/define";
 import { assignToActor, notAssignee } from "@/lib/review-queue/transitions";
 import type { ReviewQueueConfig } from "@/lib/review-queue/types";
@@ -11,7 +11,8 @@ import {
 import { formatUtc } from "@/lib/format";
 import { countryOptions, kycRepository } from "@/apps/kyc/repository";
 import type { KycCase } from "@/apps/kyc/types";
-import { RISK_LEVELS } from "@/apps/kyc/risk";
+import { RISK_LEVELS, RISK_LEVEL_LABELS } from "@/apps/kyc/risk";
+import { RiskBadge } from "@/apps/kyc/risk-badge";
 
 const allRoles = (): typeof ROLES => ROLES;
 const approvalRoles = (item: KycCase): readonly (typeof ROLES)[number][] =>
@@ -68,15 +69,15 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     {
       key: "riskLevel",
       label: "Risk",
-      options: RISK_LEVELS.map((value) => ({ value, label: value })),
+      options: RISK_LEVELS.map((value) => ({ value, label: RISK_LEVEL_LABELS[value] })),
     },
     { key: "country", label: "Country", options: countryOptions() },
   ],
   listColumns: [
     { key: "customerLabel", label: "Customer", render: (item) => item.customerLabel },
     { key: "country", label: "Country", render: (item) => item.country },
-    { key: "riskLevel", label: "Risk", render: (item) => <Badge value={item.riskLevel} /> },
-    { key: "status", label: "Status", render: (item) => <Badge value={item.status} /> },
+    { key: "riskLevel", label: "Risk", render: (item) => <RiskBadge riskLevel={item.riskLevel} /> },
+    { key: "status", label: "Status", render: (item) => <StatusBadge status={item.status} /> },
     { key: "assignee", label: "Assignee", render: (item) => item.assignee?.name ?? "Unassigned" },
     { key: "submittedAt", label: "Submitted", render: (item) => formatUtc(item.submittedAt) },
   ],
@@ -84,8 +85,8 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     { key: "customerLabel", label: "Customer", render: (item) => item.customerLabel },
     { key: "customerEmail", label: "Customer email", render: (item) => item.customerEmail },
     { key: "country", label: "Country", render: (item) => item.country },
-    { key: "riskLevel", label: "Risk", render: (item) => <Badge value={item.riskLevel} /> },
-    { key: "status", label: "Status", render: (item) => <Badge value={item.status} /> },
+    { key: "riskLevel", label: "Risk", render: (item) => <RiskBadge riskLevel={item.riskLevel} /> },
+    { key: "status", label: "Status", render: (item) => <StatusBadge status={item.status} /> },
     { key: "assignee", label: "Assignee", render: (item) => item.assignee?.name ?? "Unassigned" },
     { key: "submittedAt", label: "Submitted", render: (item) => formatUtc(item.submittedAt) },
   ],
