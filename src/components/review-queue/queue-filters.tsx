@@ -12,10 +12,13 @@ export function QueueFilters({
   filters: readonly FilterDef[];
   values: Record<string, string | string[] | undefined>;
 }) {
+  const formKey = filters
+    .map((filter) => `${filter.key}=${typeof values[filter.key] === "string" ? values[filter.key] : ""}`)
+    .join("&");
   return (
     <Card size="sm">
       <CardContent>
-        <form className="flex flex-wrap items-end gap-4" method="get">
+        <form className="flex flex-wrap items-end gap-4" key={formKey} method="get">
           {filters.map((filter) => (
             <div className="flex min-w-40 flex-col gap-1.5" key={filter.key}>
               <Label htmlFor={`filter-${filter.key}`}>{filter.label}</Label>

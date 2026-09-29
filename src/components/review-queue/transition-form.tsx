@@ -72,7 +72,7 @@ export function TransitionForm({
         <Button type="button" variant="outline">{transition.label}</Button>
       </DialogTrigger>
       <DialogContent>
-        <form action={formAction} className="space-y-4" ref={formRef}>
+        <form action={formAction} className="min-w-0 space-y-4" ref={formRef}>
           <DialogHeader>
             <DialogTitle>{transition.label}</DialogTitle>
             <DialogDescription>A comment is required for this action.</DialogDescription>

@@ -10,20 +10,20 @@ import { reviewQueues } from "@/apps/registry";
 export function AppHeader({ session }: { session: Session }) {
   return (
     <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-6 px-6">
-        <div className="flex items-center gap-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
           <Link className="text-sm font-semibold tracking-tight" href="/">
             Internal Tools
           </Link>
-          <nav className="flex items-center gap-1">
+          <nav className="flex flex-wrap items-center gap-1">
             {reviewQueues.map((queue) => (
               <NavLink href={queue.basePath} key={queue.key} label={queue.title} />
             ))}
             {can(session, "viewAuditLog") ? <NavLink href="/audit" label="Audit log" /> : null}
           </nav>
         </div>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="font-medium">{session.name}</span>
+        <div className="flex min-w-0 items-center gap-3 text-sm">
+          <span className="truncate font-medium">{session.name}</span>
           <Badge variant="secondary">{session.role}</Badge>
           <form action={async () => { "use server"; await signOutAction(); }}>
             <Button size="sm" type="submit" variant="outline">
