@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { recordAudit } from "@/lib/audit/record";
-import { AppError } from "@/lib/errors";
+import { AppError, type AppErrorCode } from "@/lib/errors";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/lib/config/pagination";
 import type { Session } from "@/lib/auth/provider";
 import { requireRole } from "@/lib/auth/session";
@@ -72,10 +72,14 @@ function transitionFor<Item extends ReviewItem>(
   }
   const guardCode = transition.guard?.(item, actor);
   if (guardCode) {
-    throw new AppError(guardCode, "This transition is not allowed");
+    throw new AppError(guardCode, GUARD_MESSAGES[guardCode] ?? "This transition is not allowed");
   }
   return transition;
 }
+
+const GUARD_MESSAGES: Partial<Record<AppErrorCode, string>> = {
+  SELF_APPROVAL: "You are assigned to this case, so a different user must make the decision",
+};
 
 export async function listItems<Item extends ReviewItem>(
   config: ReviewQueueConfig<Item>,
