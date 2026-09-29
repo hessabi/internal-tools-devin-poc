@@ -1,4 +1,13 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { ColumnDef, ReviewItem } from "@/lib/review-queue/types";
 
 export function QueueList<Item extends ReviewItem>({
@@ -11,38 +20,38 @@ export function QueueList<Item extends ReviewItem>({
   basePath: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
-          <tr>
+    <Card className="py-0">
+      <Table>
+        <TableHeader className="bg-muted/50">
+          <TableRow>
             {columns.map((column) => (
-              <th className="px-4 py-3 font-medium" key={column.key}>
+              <TableHead className="px-4" key={column.key}>
                 {column.label}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {items.map((item) => (
-            <tr className="border-t border-slate-200" key={item.id}>
+            <TableRow key={item.id}>
               {columns.map((column) => (
-                <td className="px-4 py-3" key={column.key}>
+                <TableCell className="px-4 py-3" key={column.key}>
                   <Link className="hover:underline" href={`${basePath}/${item.id}`}>
                     {column.render(item)}
                   </Link>
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
           {items.length === 0 ? (
-            <tr>
-              <td className="px-4 py-8 text-center text-slate-500" colSpan={columns.length}>
+            <TableRow>
+              <TableCell className="py-8 text-center text-muted-foreground" colSpan={columns.length}>
                 No items match these filters.
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ) : null}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

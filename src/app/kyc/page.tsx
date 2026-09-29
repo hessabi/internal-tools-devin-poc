@@ -20,7 +20,7 @@ export default async function KycPage({
   return (
     <>
       <AppHeader session={session} />
-      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <PageHeader title={kycQueue.title} description={kycQueue.description} />
         <QueueFilters filters={kycQueue.filters} values={values} />
         <QueueList basePath={kycQueue.basePath} columns={kycQueue.listColumns} items={result.items} />

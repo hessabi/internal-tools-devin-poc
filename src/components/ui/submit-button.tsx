@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export function SubmitButton({
   label,
   pending,
@@ -7,17 +9,14 @@ export function SubmitButton({
   pending: boolean;
   variant: "primary" | "secondary";
 }) {
-  const style =
-    variant === "primary"
-      ? "bg-slate-900 text-white hover:bg-slate-700"
-      : "border border-slate-300 hover:bg-slate-50";
   return (
-    <button
-      className={`mt-3 rounded px-4 py-2 text-sm font-medium disabled:cursor-wait disabled:opacity-60 ${style}`}
+    <Button
+      className="disabled:cursor-wait"
       disabled={pending}
       type="submit"
+      variant={variant === "primary" ? "default" : "outline"}
     >
       {pending ? "Saving..." : label}
-    </button>
+    </Button>
   );
 }

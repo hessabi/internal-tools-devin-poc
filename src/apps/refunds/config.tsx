@@ -102,7 +102,7 @@ export const refundsQueue: ReviewQueueConfig<Refund> = defineReviewQueue({
     {
       key: "amountBand",
       label: "Approval level",
-      render: (item) => <Badge label={AMOUNT_BAND_LABELS[amountBandOf(item)]} />,
+      render: (item) => <Badge variant="outline">{AMOUNT_BAND_LABELS[amountBandOf(item)]}</Badge>,
     },
     { key: "reason", label: "Reason", render: (item) => REFUND_REASON_LABELS[item.reason] },
     { key: "status", label: "Status", render: (item) => <StatusBadge status={item.status} /> },

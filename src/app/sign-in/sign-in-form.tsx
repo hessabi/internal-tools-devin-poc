@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { signInAs } from "@/app/sign-in/actions";
+import { Button } from "@/components/ui/button";
 import type { ActionResult } from "@/lib/errors";
 
 export function SignInForm({ userId }: { userId: string }) {
@@ -12,15 +13,11 @@ export function SignInForm({ userId }: { userId: string }) {
   return (
     <form action={action}>
       <input name="userId" type="hidden" value={userId} />
-      <button
-        className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        disabled={pending}
-        type="submit"
-      >
+      <Button disabled={pending} size="sm" type="submit">
         {pending ? "Signing in..." : "Sign in as"}
-      </button>
+      </Button>
       {state && !state.ok ? (
-        <p className="mt-2 text-sm text-red-700">{state.message}</p>
+        <p className="mt-2 text-sm text-destructive">{state.message}</p>
       ) : null}
     </form>
   );

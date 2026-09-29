@@ -20,7 +20,7 @@ export default async function RefundsPage({
   return (
     <>
       <AppHeader session={session} />
-      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <PageHeader title={refundsQueue.title} description={refundsQueue.description} />
         <QueueFilters filters={refundsQueue.filters} values={values} />
         <QueueList basePath={refundsQueue.basePath} columns={refundsQueue.listColumns} items={result.items} />
