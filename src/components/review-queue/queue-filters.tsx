@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { FilterDef } from "@/lib/review-queue/types";
 
 export function QueueFilters({
@@ -25,6 +26,9 @@ export function QueueFilters({
       <button className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white" type="submit">
         Apply filters
       </button>
+      <Link className="px-2 py-2 text-sm text-slate-600 hover:underline" href="?">
+        Clear filters
+      </Link>
     </form>
   );
 }

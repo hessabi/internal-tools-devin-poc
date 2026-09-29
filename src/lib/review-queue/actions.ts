@@ -133,6 +133,7 @@ export function summarizeTransition<Item extends ReviewItem>(
   return {
     action: transition.action,
     label: transition.label,
+    successMessage: transition.successMessage,
     requireComment: transition.requireComment,
   };
 }

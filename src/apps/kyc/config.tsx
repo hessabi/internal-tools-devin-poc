@@ -28,6 +28,7 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     {
       action: "start_review",
       label: "Start review",
+      successMessage: "Review started. The case is assigned to you.",
       from: ["pending"],
       to: "in_review",
       requireComment: false,
@@ -37,6 +38,7 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     {
       action: "approve",
       label: "Approve",
+      successMessage: "Case approved.",
       from: ["in_review"],
       to: "approved",
       requireComment: false,
@@ -46,6 +48,7 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     {
       action: "reject",
       label: "Reject",
+      successMessage: "Case rejected.",
       from: ["in_review"],
       to: "rejected",
       requireComment: true,

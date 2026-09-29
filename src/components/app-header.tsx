@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions";
+import { NavLink } from "@/components/nav-link";
+import { can } from "@/lib/auth/permissions";
 import type { Session } from "@/lib/auth/provider";
 
 export function AppHeader({ session }: { session: Session }) {
@@ -10,9 +12,8 @@ export function AppHeader({ session }: { session: Session }) {
           <Link className="font-semibold" href="/">
             Internal Tools
           </Link>
-          <Link className="text-sm text-slate-600 hover:text-slate-900" href="/kyc">
-            KYC queue
-          </Link>
+          <NavLink href="/kyc" label="KYC queue" />
+          {can(session, "viewAuditLog") ? <NavLink href="/audit" label="Audit log" /> : null}
         </nav>
         <div className="flex items-center gap-4 text-sm">
           <span>

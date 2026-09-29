@@ -14,6 +14,7 @@ export type ReviewItem = {
 export type Transition<Item extends ReviewItem> = {
   action: AuditAction;
   label: string;
+  successMessage: string;
   from: readonly ReviewStatus[];
   to: ReviewStatus;
   requireComment: boolean;
@@ -27,7 +28,7 @@ export type Transition<Item extends ReviewItem> = {
 
 export type TransitionSummary = Pick<
   Transition<ReviewItem>,
-  "action" | "label" | "requireComment"
+  "action" | "label" | "successMessage" | "requireComment"
 >;
 
 export type FilterDef = {

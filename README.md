@@ -186,7 +186,9 @@ file storage are out of scope for the first version.
    update its labels and transition types.
 4. **Define transitions and rules.** In
    `src/apps/expense-claims/config.tsx`, add a `transitions` array with
-   `allowedRoles`, `requireComment`, and the `notAssignee` guard. Add a named
+   `allowedRoles`, `requireComment`, a `successMessage` shown after the
+   action succeeds, and the `notAssignee` guard. Set `notesLockedStatuses` to
+   the states where notes become read-only. Add a named
    `CLAIM_MANAGER_THRESHOLD = 500` in
    `src/apps/expense-claims/config.ts` or a limits file. Use that constant in
    the threshold guard.
