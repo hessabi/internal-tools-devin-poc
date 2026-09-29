@@ -1,7 +1,8 @@
 import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { recordAudit } from "@/lib/audit/record";
-import { AppError, type AppErrorCode } from "@/lib/errors";
+import { AppError } from "@/lib/errors";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/lib/config/pagination";
 import type { Session } from "@/lib/auth/provider";
 import type {
@@ -142,7 +143,7 @@ export async function runTransition<Item extends ReviewItem>(
   if (transition.requireComment && !parsed.data.comment?.trim()) {
     throw new AppError("COMMENT_REQUIRED", "A comment is required for this transition");
   }
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const changes = {
       status: transition.to,
       ...(transition.onApply?.(item, session) ?? {}),
@@ -179,7 +180,7 @@ export async function updateNotes<Item extends ReviewItem>(
     throw new AppError("FORBIDDEN", "Notes are not editable for this queue");
   }
   const item = await getItem(config, session, parsed.data.id);
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const updated = await config.repository.update(tx, item.id, {
       [config.editableNotesField as string]: parsed.data.notes,
     } as Partial<Item>);

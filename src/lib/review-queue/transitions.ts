@@ -13,5 +13,5 @@ export function assignToActor<Item extends ReviewItem>(
   _item: Item,
   actor: Session,
 ): Partial<Item> {
-  return { assigneeId: actor.userId };
+  return { assigneeId: actor.userId } as Partial<Item>;
 }

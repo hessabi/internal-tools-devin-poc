@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { ReviewStatusSchema } from "@/lib/config/states";
-import { RiskLevelSchema, type RiskLevel } from "@/apps/kyc/risk";
+import { RiskLevelSchema } from "@/apps/kyc/risk";
 import type { KycCase } from "@/apps/kyc/types";
 import type { QueueRepository } from "@/lib/review-queue/types";
 

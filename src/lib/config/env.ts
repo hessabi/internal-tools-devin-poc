@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const EnvSchema = z.object({
-  DATABASE_URL: z.string().min(1),
+  DATABASE_URL: z.string().min(1).default("file:./dev.db"),
   AUTH_DEV_LOGIN: z
     .string()
     .optional()

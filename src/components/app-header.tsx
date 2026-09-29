@@ -18,7 +18,7 @@ export function AppHeader({ session }: { session: Session }) {
           <span>
             {session.name} <span className="text-slate-500">({session.role})</span>
           </span>
-          <form action={signOutAction}>
+          <form action={async () => { "use server"; await signOutAction(); }}>
             <button className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-50" type="submit">
               Sign out
             </button>

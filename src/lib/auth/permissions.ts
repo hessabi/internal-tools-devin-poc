@@ -13,5 +13,5 @@ export const PERMISSIONS = {
 export type Permission = keyof typeof PERMISSIONS;
 
 export function can(session: Session, permission: Permission): boolean {
-  return PERMISSIONS[permission].includes(session.role);
+  return (PERMISSIONS[permission] as readonly Role[]).includes(session.role);
 }
