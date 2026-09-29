@@ -3,6 +3,7 @@ import { signOutAction } from "@/app/actions";
 import { NavLink } from "@/components/nav-link";
 import { can } from "@/lib/auth/permissions";
 import type { Session } from "@/lib/auth/provider";
+import { reviewQueues } from "@/apps/registry";
 
 export function AppHeader({ session }: { session: Session }) {
   return (
@@ -12,7 +13,9 @@ export function AppHeader({ session }: { session: Session }) {
           <Link className="font-semibold" href="/">
             Internal Tools
           </Link>
-          <NavLink href="/kyc" label="KYC queue" />
+          {reviewQueues.map((queue) => (
+            <NavLink href={queue.basePath} key={queue.key} label={queue.title} />
+          ))}
           {can(session, "viewAuditLog") ? <NavLink href="/audit" label="Audit log" /> : null}
         </nav>
         <div className="flex items-center gap-4 text-sm">

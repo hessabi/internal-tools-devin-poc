@@ -70,12 +70,16 @@ The permission matrix is:
 | Start review, edit notes before a decision | yes | yes | yes |
 | Approve or reject low or medium risk | yes | yes | yes |
 | Approve or reject high risk | no | yes | yes |
+| View refunds dashboard and refund detail | yes | yes | yes |
+| Start a refund review | yes | yes | yes |
+| Approve or reject refunds of 500 USD or less | yes | yes | yes |
+| Approve or reject refunds over 500 USD | no | yes | yes |
 | View audit log | no | yes | yes |
 
-Checks run in server code. A case cannot be approved or rejected by its
-assignee. This maker-checker rule applies even when the actor has the required
-role. Rejecting a case always requires a comment. High-risk approval and
-rejection require a manager or admin.
+Checks run in server code. A case or refund cannot be approved or rejected by
+its assignee. This maker-checker rule applies even when the actor has the
+required role. Rejecting always requires a comment. High-risk KYC decisions and
+refund decisions above the threshold require a manager or admin.
 
 ### Audit log
 
@@ -116,6 +120,24 @@ const kycQueue = defineReviewQueue({
   repository: kycRepository,
 });
 ```
+
+Both tools are registered in `src/apps/registry.ts`. The home page, the
+header navigation, and the audit log entity links read from that list, so a
+new tool appears in all three once it is registered.
+
+### Tools built on the pattern
+
+- **KYC review queue** (`src/apps/kyc/`, `/kyc`): analysts review synthetic
+  customer cases; high-risk decisions need a manager or admin.
+- **Refunds dashboard** (`src/apps/refunds/`, `/refunds`): support agents
+  review synthetic refund requests. Refunds over
+  `REFUND_MANAGER_THRESHOLD_CENTS` (500 USD, in `src/apps/refunds/limits.ts`)
+  need a manager or admin. Amounts are stored as integer cents. The order
+  reference is treated as sensitive: it appears on the detail page but is
+  redacted from audit changes and left out of the list. Out of scope for the
+  first version: sending refunds to a payment processor, customer
+  notifications, links to real orders, partial refunds, and currencies other
+  than USD.
 
 List requests use a default page size of 20 and a maximum page size of 50.
 Filter keys and values are checked with Zod at the server boundary. Errors use
@@ -177,8 +199,11 @@ file storage are out of scope for the first version.
 ### Implementation steps
 
 1. **Add the record and fields.** Add an `ExpenseClaim` model to
-   `prisma/schema.prisma`, run `npm run db:push`, and add synthetic seed rows
-   in `prisma/seed.ts`.
+   `prisma/schema.prisma` with a named assignee relation on `User`, run
+   `npx prisma generate` and `npm run db:push`, and add synthetic seed rows
+   in `prisma/seed.ts`. Add the new table to the `deleteMany` calls at the top
+   of the seed. Store money as integer minor units (cents) and format it with
+   `formatMoney` from `src/lib/format.ts`.
 2. **Mark sensitive fields.** Add `receiptReference` to `REDACTED_FIELDS` in
    `src/lib/audit/record.ts`. Do not include it in list columns.
 3. **Define states.** Reuse `ReviewStatus` for these four states. If the tool
@@ -189,12 +214,16 @@ file storage are out of scope for the first version.
    `allowedRoles`, `requireComment`, a `successMessage` shown after the
    action succeeds, and the `notAssignee` guard. Set `notesLockedStatuses` to
    the states where notes become read-only. Add a named
-   `CLAIM_MANAGER_THRESHOLD = 500` in
-   `src/apps/expense-claims/config.ts` or a limits file. Use that constant in
-   the threshold guard.
+   `CLAIM_MANAGER_THRESHOLD_CENTS = 500_00` in
+   `src/apps/expense-claims/limits.ts`. Use that constant in the
+   `allowedRoles` function and in the repository filter so the rule and the
+   filter cannot drift apart. Choice fields such as a reason list live in
+   their own file with a Zod enum and labels, like `src/apps/refunds/reasons.ts`.
 5. **Define filters.** Add the status, amount band, and currency entries to
    the `filters` array in the queue configuration. Keep option values in one
-   configuration source.
+   configuration source. A derived filter such as amount band is translated
+   into a Prisma `where` clause in the repository; see `amountFilter` in
+   `src/apps/refunds/repository.ts`.
 6. **Add the repository.** Create
    `src/apps/expense-claims/repository.ts` to translate queue filters and
    pagination into Prisma queries.
@@ -203,16 +232,23 @@ file storage are out of scope for the first version.
    transition and notes functions, then revalidate the route.
 8. **Add two thin pages.** Create `src/app/expense-claims/page.tsx` for the
    list and `src/app/expense-claims/[id]/page.tsx` for the detail view. Both
-   obtain a session and render shared queue components.
-9. **Add navigation.** Add an Expense claims link to `src/app/page.tsx`.
-10. **Copy the tests.** Copy the integration test patterns in
-    `tests/permissions.test.ts`, `tests/audit.test.ts`,
-    `tests/transitions.test.ts`, `tests/auth.test.ts`, and
-    `tests/list.test.ts`. Add tests for the 500 threshold, maker-checker,
-    comments, audit changes, and list filters.
+   obtain a session and render shared queue components. Read the title and
+   `basePath` from the queue configuration instead of repeating them. Only
+   render the notes section when the queue sets `editableNotesField`.
+9. **Register the tool.** Add the queue configuration to `reviewQueues` in
+   `src/apps/registry.ts`. The home page, the header navigation, and the
+   audit log entity links all read from that list.
+10. **Copy the tests.** Add a `createExpenseClaim` fixture to
+    `tests/helpers/fixtures.ts` and add the new table to `resetDatabase`.
+    Copy the integration test patterns in `tests/permissions.test.ts`,
+    `tests/audit.test.ts`, `tests/transitions.test.ts`, `tests/auth.test.ts`,
+    and `tests/list.test.ts` into one `tests/expense-claims.test.ts`. Cover
+    the 500 threshold for both approve and reject, maker-checker, required
+    comments, audit changes with sensitive fields redacted, and list filters.
+    `tests/refunds.test.ts` is a complete example.
 
 The target is one schema model, one queue configuration, one repository file,
-one actions file, and two thin pages. Authorization and transition behavior
+one actions file, two thin pages, one registry entry, and one test file. Authorization and transition behavior
 remain shared server logic rather than copied page code.
 
 ## Out of scope and what production would still need
@@ -261,11 +297,24 @@ src/
     sign-in/page.tsx
     kyc/page.tsx
     kyc/[id]/page.tsx
+    refunds/page.tsx
+    refunds/[id]/page.tsx
     audit/page.tsx
-  apps/kyc/
-    config.tsx
-    repository.ts
-    actions.ts
+  apps/
+    registry.ts
+    kyc/
+      config.tsx
+      repository.ts
+      actions.ts
+      risk.ts
+      types.ts
+    refunds/
+      config.tsx
+      repository.ts
+      actions.ts
+      limits.ts
+      reasons.ts
+      types.ts
   lib/
     auth/
     audit/
@@ -278,4 +327,6 @@ tests/
   transitions.test.ts
   auth.test.ts
   list.test.ts
+  notes.test.ts
+  refunds.test.ts
 ```

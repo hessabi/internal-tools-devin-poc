@@ -14,9 +14,18 @@ const users = [
 const countries = ["AQ", "BV", "CX", "EH", "UM"] as const;
 const riskLevels = ["low", "medium", "high"] as const;
 const statuses = ["pending", "in_review", "approved", "rejected"] as const;
+const refundReasons = [
+  "damaged_item",
+  "not_received",
+  "duplicate_charge",
+  "service_issue",
+  "other",
+] as const;
+const refundAmountsCents = [1250, 4999, 18000, 50000, 64000, 125000, 9900, 275000] as const;
 
 async function main(): Promise<void> {
   await prisma.auditEntry.deleteMany();
+  await prisma.refund.deleteMany();
   await prisma.kycCase.deleteMany();
   await prisma.user.deleteMany();
 
@@ -51,6 +60,27 @@ async function main(): Promise<void> {
         assigneeId,
         notes: "",
         submittedAt,
+      },
+    });
+  }
+
+  for (let index = 0; index < 40; index += 1) {
+    const number = index + 1;
+    const status = statuses[index % statuses.length];
+    const assigneeId =
+      status === "in_review" ? analysts[index % analysts.length].id : null;
+    const label = String(number).padStart(3, "0");
+    await prisma.refund.create({
+      data: {
+        refundLabel: `Refund RF-${label}`,
+        customerLabel: `Test Customer ${label}`,
+        orderReference: `test-order-${1000 + number}`,
+        amountCents: refundAmountsCents[index % refundAmountsCents.length],
+        currency: "USD",
+        reason: refundReasons[index % refundReasons.length],
+        status,
+        assigneeId,
+        submittedAt: new Date(now - (40 - index) * 6 * 60 * 60 * 1000),
       },
     });
   }

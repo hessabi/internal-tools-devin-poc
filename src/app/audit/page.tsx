@@ -8,6 +8,7 @@ import { requirePageSession } from "@/lib/auth/session";
 import { listAuditEntries } from "@/lib/audit/repository";
 import { formatUtc } from "@/lib/format";
 import { logError } from "@/lib/logger";
+import { queueForEntityType } from "@/apps/registry";
 
 const changesSchema = z.object({
   before: z.record(z.string(), z.unknown()),
@@ -83,6 +84,7 @@ export default async function AuditPage({
             <tbody>
               {result.items.map((entry) => {
                 const changes = parseChanges(entry.changes);
+                const queue = queueForEntityType(entry.entityType);
                 const changedKeys = changes
                   ? Object.keys(changes.after).concat(
                       Object.keys(changes.before).filter(
@@ -99,8 +101,8 @@ export default async function AuditPage({
                     </td>
                     <td className="px-4 py-3">{entry.action}</td>
                     <td className="px-4 py-3">
-                      {entry.entityType === "kyc_case" ? (
-                        <Link className="text-blue-700 hover:underline" href={`/kyc/${entry.entityId}`}>
+                      {queue ? (
+                        <Link className="text-blue-700 hover:underline" href={`${queue.basePath}/${entry.entityId}`}>
                           {entry.entityType}/{entry.entityId}
                         </Link>
                       ) : (

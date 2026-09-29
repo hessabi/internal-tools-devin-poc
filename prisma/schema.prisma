@@ -15,6 +15,7 @@ model User {
   createdAt      DateTime    @default(now())
   auditEntries   AuditEntry[]
   assignedCases  KycCase[]   @relation("CaseAssignee")
+  assignedRefunds Refund[]   @relation("RefundAssignee")
 }
 
 model AuditEntry {
@@ -48,4 +49,24 @@ model KycCase {
 
   @@index([status])
   @@index([riskLevel])
+}
+
+model Refund {
+  id             String   @id @default(cuid())
+  refundLabel    String
+  customerLabel  String
+  orderReference String
+  amountCents    Int
+  currency       String
+  reason         String
+  status         String
+  assigneeId     String?
+  assignee       User?    @relation("RefundAssignee", fields: [assigneeId], references: [id])
+  submittedAt    DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([reason])
+  @@index([amountCents])
 }

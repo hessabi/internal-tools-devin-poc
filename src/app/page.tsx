@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AppHeader } from "@/components/app-header";
 import { can } from "@/lib/auth/permissions";
 import { requirePageSession } from "@/lib/auth/session";
+import { reviewQueues } from "@/apps/registry";
 
 export default async function Home() {
   const session = await requirePageSession();
@@ -14,10 +15,12 @@ export default async function Home() {
           Synthetic internal review tools built on a shared foundation.
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          <Link className="rounded border border-slate-200 bg-white p-5 hover:border-slate-400" href="/kyc">
-            <h2 className="font-semibold">KYC review queue</h2>
-            <p className="mt-1 text-sm text-slate-600">Review synthetic customer cases.</p>
-          </Link>
+          {reviewQueues.map((queue) => (
+            <Link className="rounded border border-slate-200 bg-white p-5 hover:border-slate-400" href={queue.basePath} key={queue.key}>
+              <h2 className="font-semibold">{queue.title}</h2>
+              <p className="mt-1 text-sm text-slate-600">{queue.description}</p>
+            </Link>
+          ))}
           {can(session, "viewAuditLog") ? (
             <Link className="rounded border border-slate-200 bg-white p-5 hover:border-slate-400" href="/audit">
               <h2 className="font-semibold">Audit log</h2>
