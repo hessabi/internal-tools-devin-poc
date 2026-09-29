@@ -198,6 +198,8 @@ file storage are out of scope for the first version.
 
 ### Implementation steps
 
+Build every page from the shared shadcn/ui components in `src/components/ui/` (table, badge, button, select, card, dialog) and the app shell in `src/components/app-header.tsx`, not a per-tool kit.
+
 1. **Add the record and fields.** Add an `ExpenseClaim` model to
    `prisma/schema.prisma` with a named assignee relation on `User`, run
    `npx prisma generate` and `npm run db:push`, and add synthetic seed rows
@@ -254,7 +256,7 @@ remain shared server logic rather than copied page code.
 ## Out of scope and what production would still need
 
 This prototype does not include a feature-flag panel, real SSO or OIDC,
-deployment or hosting, notifications, or a design system.
+deployment or hosting, notifications, or a custom design system. Shared UI uses shadcn/ui components.
 
 Moving this foundation into production would still require:
 
