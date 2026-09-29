@@ -25,6 +25,11 @@ export type Transition<Item extends ReviewItem> = {
   onApply?: (item: Item, actor: Session) => Partial<Item>;
 };
 
+export type TransitionSummary = Pick<
+  Transition<ReviewItem>,
+  "action" | "label" | "requireComment"
+>;
+
 export type FilterDef = {
   key: string;
   label: string;

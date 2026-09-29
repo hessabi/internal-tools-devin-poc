@@ -7,7 +7,11 @@ import { TransitionForm } from "@/components/review-queue/transition-form";
 import { PageHeader } from "@/components/ui/page-header";
 import { requirePageSession } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
-import { availableTransitions, getItem } from "@/lib/review-queue/actions";
+import {
+  availableTransitions,
+  getItem,
+  summarizeTransition,
+} from "@/lib/review-queue/actions";
 import { kycNotesAction, kycTransitionAction } from "@/apps/kyc/actions";
 import { kycQueue } from "@/apps/kyc/config";
 
@@ -27,7 +31,9 @@ export default async function KycDetailPage({
     }
     throw error;
   }
-  const transitions = availableTransitions(kycQueue, item, session);
+  const transitions = availableTransitions(kycQueue, item, session).map(
+    summarizeTransition,
+  );
   return (
     <>
       <AppHeader session={session} />

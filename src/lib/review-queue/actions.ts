@@ -10,6 +10,7 @@ import type {
   ReviewItem,
   ReviewQueueConfig,
   Transition,
+  TransitionSummary,
 } from "@/lib/review-queue/types";
 
 type RawQuery = Record<string, string | string[] | undefined>;
@@ -124,6 +125,16 @@ export function availableTransitions<Item extends ReviewItem>(
     }
     return !transition.guard || transition.guard(item, actor) === null;
   });
+}
+
+export function summarizeTransition<Item extends ReviewItem>(
+  transition: Transition<Item>,
+): TransitionSummary {
+  return {
+    action: transition.action,
+    label: transition.label,
+    requireComment: transition.requireComment,
+  };
 }
 
 const transitionInput = z.object({
