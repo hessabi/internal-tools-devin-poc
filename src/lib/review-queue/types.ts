@@ -57,6 +57,7 @@ export type ReviewQueueConfig<Item extends ReviewItem> = {
   description: string;
   basePath: string;
   entityType: string;
+  readRoles: readonly Role[];
   transitions: readonly Transition<Item>[];
   filters: readonly FilterDef[];
   listColumns: readonly ColumnDef<Item>[];

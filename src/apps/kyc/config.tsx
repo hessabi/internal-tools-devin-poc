@@ -3,6 +3,10 @@ import { defineReviewQueue } from "@/lib/review-queue/define";
 import { assignToActor, notAssignee } from "@/lib/review-queue/transitions";
 import type { ReviewQueueConfig } from "@/lib/review-queue/types";
 import { ROLES } from "@/lib/config/roles";
+import {
+  REVIEW_STATUSES,
+  REVIEW_STATUS_LABELS,
+} from "@/lib/config/states";
 import { formatUtc } from "@/lib/format";
 import { countryOptions, kycRepository } from "@/apps/kyc/repository";
 import type { KycCase } from "@/apps/kyc/types";
@@ -18,6 +22,7 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
   description: "Review synthetic customer cases and record decisions.",
   basePath: "/kyc",
   entityType: "kyc_case",
+  readRoles: ROLES,
   transitions: [
     {
       action: "start_review",
@@ -51,12 +56,10 @@ export const kycQueue: ReviewQueueConfig<KycCase> = defineReviewQueue({
     {
       key: "status",
       label: "Status",
-      options: [
-        { value: "pending", label: "Pending" },
-        { value: "in_review", label: "In review" },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Rejected" },
-      ],
+      options: REVIEW_STATUSES.map((value) => ({
+        value,
+        label: REVIEW_STATUS_LABELS[value],
+      })),
     },
     {
       key: "riskLevel",

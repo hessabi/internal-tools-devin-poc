@@ -1,12 +1,10 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { AppHeader } from "@/components/app-header";
 import { Pagination } from "@/components/review-queue/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import { can } from "@/lib/auth/permissions";
-import { requireSession } from "@/lib/auth/session";
-import { AppError } from "@/lib/errors";
+import { requirePageSession } from "@/lib/auth/session";
 import { listAuditEntries } from "@/lib/audit/repository";
 import { formatUtc } from "@/lib/format";
 import { logError } from "@/lib/logger";
@@ -42,15 +40,7 @@ export default async function AuditPage({
 }: {
   searchParams: SearchParams;
 }) {
-  let session;
-  try {
-    session = await requireSession();
-  } catch (error: unknown) {
-    if (error instanceof AppError && error.code === "UNAUTHENTICATED") {
-      redirect("/sign-in");
-    }
-    throw error;
-  }
+  const session = await requirePageSession();
   if (!can(session, "viewAuditLog")) {
     return (
       <>

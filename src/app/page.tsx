@@ -1,20 +1,10 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/app-header";
 import { can } from "@/lib/auth/permissions";
-import { requireSession } from "@/lib/auth/session";
-import { AppError } from "@/lib/errors";
+import { requirePageSession } from "@/lib/auth/session";
 
 export default async function Home() {
-  let session;
-  try {
-    session = await requireSession();
-  } catch (error: unknown) {
-    if (error instanceof AppError && error.code === "UNAUTHENTICATED") {
-      redirect("/sign-in");
-    }
-    throw error;
-  }
+  const session = await requirePageSession();
   return (
     <>
       <AppHeader session={session} />

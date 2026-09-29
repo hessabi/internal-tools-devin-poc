@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/app-header";
 import { NotesForm } from "@/components/review-queue/notes-form";
 import { QueueDetail } from "@/components/review-queue/queue-detail";
 import { TransitionForm } from "@/components/review-queue/transition-form";
 import { PageHeader } from "@/components/ui/page-header";
-import { requireSession } from "@/lib/auth/session";
+import { requirePageSession } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { availableTransitions, getItem } from "@/lib/review-queue/actions";
 import { kycNotesAction, kycTransitionAction } from "@/apps/kyc/actions";
@@ -16,15 +16,7 @@ export default async function KycDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  let session;
-  try {
-    session = await requireSession();
-  } catch (error: unknown) {
-    if (error instanceof AppError && error.code === "UNAUTHENTICATED") {
-      redirect("/sign-in");
-    }
-    throw error;
-  }
+  const session = await requirePageSession();
   const { id } = await params;
   let item;
   try {

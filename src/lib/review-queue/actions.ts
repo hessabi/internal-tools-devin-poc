@@ -5,6 +5,7 @@ import { recordAudit } from "@/lib/audit/record";
 import { AppError } from "@/lib/errors";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/lib/config/pagination";
 import type { Session } from "@/lib/auth/provider";
+import { requireRole } from "@/lib/auth/session";
 import type {
   ReviewItem,
   ReviewQueueConfig,
@@ -77,9 +78,10 @@ function transitionFor<Item extends ReviewItem>(
 
 export async function listItems<Item extends ReviewItem>(
   config: ReviewQueueConfig<Item>,
-  _session: Session,
+  session: Session,
   rawQuery: RawQuery,
 ): Promise<{ items: Item[]; total: number; page: number; pageSize: number; pageCount: number }> {
+  requireRole(session, config.readRoles);
   const query = parseListQuery(config, rawQuery);
   const result = await config.repository.list(query);
   return {
@@ -92,9 +94,10 @@ export async function listItems<Item extends ReviewItem>(
 
 export async function getItem<Item extends ReviewItem>(
   config: ReviewQueueConfig<Item>,
-  _session: Session,
+  session: Session,
   id: string,
 ): Promise<Item> {
+  requireRole(session, config.readRoles);
   const parsed = z.string().min(1).safeParse(id);
   if (!parsed.success) {
     throw AppError.fromZod(parsed.error);

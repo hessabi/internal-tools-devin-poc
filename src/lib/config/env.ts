@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const EnvSchema = z.object({
-  DATABASE_URL: z.string().min(1).default("file:./dev.db"),
+  DATABASE_URL: z.string().min(1),
   AUTH_DEV_LOGIN: z
     .string()
     .optional()
@@ -29,7 +29,7 @@ export function getEnv(): Env {
     cachedEnv = EnvSchema.parse({
       DATABASE_URL: process.env.DATABASE_URL,
       AUTH_DEV_LOGIN: process.env.AUTH_DEV_LOGIN,
-      AUTH_COOKIE_SECRET: process.env.AUTH_COOKIE_SECRET ?? "change-me-local-only",
+      AUTH_COOKIE_SECRET: process.env.AUTH_COOKIE_SECRET,
       NODE_ENV: process.env.NODE_ENV,
     });
     cachedKey = key;
@@ -37,7 +37,6 @@ export function getEnv(): Env {
   return cachedEnv;
 }
 
-export const env = getEnv();
 export const isDevLoginEnabled = (): boolean => {
   const current = getEnv();
   return current.AUTH_DEV_LOGIN && current.NODE_ENV !== "production";
